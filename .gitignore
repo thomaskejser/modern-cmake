@@ -1,0 +1,60 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# All build artifacts
+**/build/
+build/
+*/build/
+*/*/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+cmake-build-debug/
+vcpkg_installed/
+.vs/
+
+# Vendored vcpkg
+extern/vcpkg/buildtrees/
+extern/vcpkg/packages/
+extern/vcpkg/downloads/
+extern/vcpkg/installed/
+.vcpkg-cache/
+extern/vcpkg/vcpkg.exe
+
+# Clion specific config. Allow us to commit and share things in the team
+.idea/*
+!.idea/misc.xml
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
