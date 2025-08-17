@@ -1,24 +1,23 @@
-Today's blog is written in collaboration with my friend \[Martin Broholm Anderson](https://github.com/MBroholmA).
+Today's blog is written in collaboration with my friend [Martin Broholm Andersen](https://github.com/MBroholmA).
 
 Martin and I are both C++ programmers - but we come from different programming traditions. This always provides us with
-a rich source of subjects to
+a rich source of subjects to argue about. We learn a lot from these arguments.
 
-argue about. I have been working for years on old Cmake projects (from the 2.x) and Martin has been busy reorganizing
-Cmake projects at his workplace
+I have been working for years on old Cmake projects (from the 2.x) and Martin has been busy reorganizing Cmake projects
+at his workplace to match a modern, CMake 3.x style. Martin is a Visual Studio user, I use CLion - so we hope our mixed
+experience will give you a good experience no matter.
 
-to match a modern, CMake 3.x style. Martin is a Visual Studio user, I use CLion - so we hope our mixed experience will
-give you a good experience no matter
+Martin's knowledge of modern CMake far exceeds mine. As he was melding his mind into mine - we both
+learned a lot. This blog contains the result of our discussions and our final agreement on best practices for creating
+modern style repos that use Cmake 3.x.
 
-what IDE you prefer.
+We expect that this blog will be regularly updated to serve as a reference for both experienced developers and new
+users who are just getting started with Cmake and C++.
 
-This blog contains the result of our discussions and our final agreement on best practices for creating modern style
-repos that use Cmake 3.x. We expect that
+The repo containing our template CMake project can be found on GitHub:
+- 
 
-this blog will be regularly updated to serve as a reference for both experienced developers and new users who are just
-getting started with Cmake and C++.
-
-The repo containing our template CMake project can be found on GitHub : \[modern
-Cmake](https://github.com/thomaskejser/modern-cmake).
+- [Modern Cmake](https://github.com/thomaskejser/modern-cmake).
 
 As is the tradition on Database Doctor - I encourage disagreement and discussions.
 
@@ -26,9 +25,9 @@ As is the tradition on Database Doctor - I encourage disagreement and discussion
 
 To play nice with other libraries, your own code should live in a namespace that is unique to you.
 
-The namespace could be the name of the company you work for - or it could be something else that is likely
-unique. Think of it the same way you think of a domain name - it's is the unique name of you little piece of code
-on the Internet.
+The namespace could be the name of the company you work for. It could be your gaming alias. The name of your dog or
+anything else that is likely be to unique. Think of it the same way you think of a domain name - it's the unique name
+of you little piece of the Internet.
 
 ## Why Pick a namespace?
 
@@ -134,9 +133,11 @@ In the root of every repo, the following files are present
 - [`README.md`](#the-root-level-readmemd)
 - [`LICENCE`](#the-license-file)
 - [`.gitignore`](#gitignore)
-- `.clang-tidy` and `.clang-format`
-- `CMakePresents.json`
-- `CMakeList.txt`
+- [`.gitmodules``](#gitmodules---external-modules)
+- [`.clang-tidy` and `.clang-format`](#clang-tidy-and-clang-format)
+- [`CMakePresents.json`](#cmakepresetsjson---configuration-options-for-your-build)
+- [`CMakeList.txt`](#the-root-level-cmakeliststxt)
+- [`.idea`]
 
 ## The Root level `README.md`
 
@@ -166,6 +167,13 @@ lawyer if you need the advice. At the rate LLMs are going - they will need your 
 
 Files listed here will be ignored by git and not be commited to the repo. Our demo repo contains a standard one
 you can use for your C++ project.
+
+## `.gitmodules` - external modules
+
+If you have have used `git submodule` this file will appear. For example, you may choose to
+[Vendor vcpkg](#the-doctors-choice-vendoring-vcpkg).
+
+You should not need to do anything to this file, it is maintained by `git`.
 
 **Resources**
 
@@ -294,7 +302,7 @@ just makes things easier for everyone.
 
 ### The rest of the source and `src/CMakeLists.txt`
 
-We have now done all our global config and we can finally add the actual source we want to compile with:
+We have now done all our global config. Finally, let us add the actual source we want to compile with:
 
 ```cmake
 add_directory(src)
@@ -313,6 +321,19 @@ add_subdirectory(renderer)
 
 This is a nice way to arrange things, because it allows us to quickly comment source and an out if we are experimenting
 with various builds.
+
+# Clion configuration in `.idea/` - particularly `misc.xml`
+
+If you are using Clion from Jetbrains - you can store additional configuration in this directory. At the time of
+writing, Clion already sets up a `.gitignore` inside this directory for you. Typically, you will want to commit at
+least the `.idea/misc.xml` file here. This file contains the directories that Clion wont index.
+
+If you are vendoring `vcpkg` you really don't want a slow Java app like Clion to start looking into every single
+build script that `vcpkg` offers. Be nice and commit your ignore rule (the repo has this file committed).
+
+# TODO: Note about Visual Studio config
+
+@martin: for you please!
 
 # Third party sources (in `extern`) and `vcpkg`
 
@@ -349,7 +370,7 @@ installation and off you go. Any repo you compile on that machine will now use t
 
 ## `CMakePresets.json` for environment supplied `vcpkg`
 
-Your present, i fyou used Martin's solution, will look something like this:
+Your presets, if you used Martin's solution, will look something like this:
 
 ```json
 {
@@ -448,14 +469,18 @@ In our repo, we supply a vendored `vcpkg` preset, it looks like this:
 }
 ```
 
-### A warning about vendored `vcpkg`
+### A Warning about Vendored `vcpkg`
 
 Vendoring allows you to be full control of every package and its binaries.
 
 However, it comes with a downside: You will get one copy of all the build binaries per repo on your machine. This can
 be a substantial amount of space on you disk.
 
-# TODO: Structuring Libraries
+Consider yourself warning - you might want Martin's solution.
+
+# Structuring Libraries
+
+You now.. TODO
 
 # TODO: Structuring Executables
 
