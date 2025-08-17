@@ -15,7 +15,6 @@ We expect that this blog will be regularly updated to serve as a reference for b
 users who are just getting started with Cmake and C++.
 
 The repo containing our template CMake project can be found on GitHub:
-- 
 
 - [Modern Cmake](https://github.com/thomaskejser/modern-cmake).
 
@@ -476,7 +475,7 @@ Vendoring allows you to be full control of every package and its binaries.
 However, it comes with a downside: You will get one copy of all the build binaries per repo on your machine. This can
 be a substantial amount of space on you disk.
 
-Consider yourself warning - you might want Martin's solution.
+Consider yourself warned - you might want Martin's solution.
 
 # Structuring Libraries
 
