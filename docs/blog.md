@@ -457,5 +457,10 @@ be a substantial amount of space on you disk.
 
 # TODO: Structuring Libraries
 
-# TODO: Structing Executables
+# TODO: Structuring Executables
+
+# TODO: Include order
+
+## Correctly including your libraries
+
 

@@ -1,12 +1,6 @@
-set(_targetName demo_shapes)
+set(_targetName "${PROJECT_NAME}_shapes")
 
-add_library(${_targetName} STATIC
-        include/demo/shapes/circle.h
-        circle.cpp
-        include/demo/shapes/point.h
-        ../renderer/svg.cpp
-        ../renderer/include/demo/renderer/svg.h
-        ../renderer/utility.h)
+add_library(${_targetName} STATIC)
 add_library(demo::shapes ALIAS ${_targetName})
 
 target_sources(${_targetName}
