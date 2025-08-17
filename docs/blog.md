@@ -136,7 +136,7 @@ In the root of every repo, the following files are present
 - [`.clang-tidy` and `.clang-format`](#clang-tidy-and-clang-format)
 - [`CMakePresents.json`](#cmakepresetsjson---configuration-options-for-your-build)
 - [`CMakeList.txt`](#the-root-level-cmakeliststxt)
-- [`.idea`]
+- [`.idea`](#clion-configuration-in-idea---particularly-miscxml)
 
 ## The Root level `README.md`
 
@@ -477,13 +477,74 @@ be a substantial amount of space on you disk.
 
 Consider yourself warned - you might want Martin's solution.
 
-# Structuring Libraries
+# Structuring your Code
 
-You now.. TODO
+Let's recap, we now have:
 
-# TODO: Structuring Executables
+- A name we have chosen for ourselves (in this case: `demo`)
+- A structure for our repo that includes all the global rules that apply to the entire repo
+- Control over all external depenencies
+- A root level `CMakeLists.txt` controlling what rules apply to all the code
+- A pointer to a directory called `src/` where we will store our libraries and executables
 
-# TODO: Include order
+Let us make some rules for our code
+
+## Structure: Libraries and Executables each have their own directory under `src/`
+
+If we build a library or executable, we create a new directory under `src/` for that library. Let's take our sample
+library called `shapes`.
+
+- We add the directory `src/shapes/`
+- The build of `shapes` is controlled fully by `src/shapes/CMakeLists.txt` - this includes pulling in all dependencies
+  via `find_package` and `target_link_library`
+- The build of `shapes` is enabled we  `add_subdirectory(shapes)` into the `src/CMakeLists.txt` file
+
+## Namespace Usage in Libraries
+
+Each library will expose its public headers under the namespace `demo::[library name]`. For example, the `shapes`
+library will have all it's externally visible classes and functions inside a declaration like this:
+
+```c++
+namspace demo::shapes {
+   class Rectangle {...}
+   class Point {...}
+   // ... etc ...
+}
+```
+
+By embedding our objects into a namespace like this, we entirely avoid naming conflicts with anyone who pull in our
+public header.
+
+In the implementation files of the library, we can use whatever structure we like since those files will never be
+visible to the outside world. If you suffer from OCD like both I and Martin does - you will of course put your data
+structures into the library reserved namespace.
+
+## File and Namespace usage in executables
+
+Executables just need a `int main(...)` function. The executable, like the library, has its own directory under `src/`
+and we will put the main function into `main.cpp`.
+
+In general, the only code we have in the executable will be parsing of arguments and gluing libraries together. Anything
+more complex goes into a library of its own.
+
+Since executables don't have publicly visible headers that must be linked - we don't need to care about namespace usage.
+But see notes on OCD above.
+
+# Public Headers and the `include/` directory
+
+TODO
+
+## Correctly including and linking a library
+
+TODO
+
+## Include Order
+
+TODO
+
+# Test files
+
+TODO
 
 ## Correctly including your libraries
 
