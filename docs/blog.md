@@ -3,8 +3,7 @@ Today's blog is written in collaboration with my friend [Martin Broholm Andersen
 Martin and I are both C++ programmers - but we come from different programming traditions. This always provides us with
 a rich source of subjects to argue about. We learn a lot from these arguments.
 
-I have been working for years on old Cmake projects (from the 2.x) and Martin has been busy reorganizing Cmake projects
-at his workplace to match a modern, CMake 3.x style. Martin is a Visual Studio user, I use CLion - so we hope our mixed
+I have been working for years on old Cmake projects (from the 2.x) and Martin has been busy moving legacy .sln/.vcxproj projects at his workplace to modern, CMake 3.x style projects. The reason for moving to CMake was not to be able to cross compile, but instead be able to scale, reorganize and merge the code base much easier. Martin is a Visual Studio user, I use CLion - so we hope our mixed
 experience will give you a good experience no matter.
 
 Martin's knowledge of modern CMake far exceeds mine. As he was melding his mind into mine - we both
@@ -277,10 +276,12 @@ foreach (lang IN ITEMS C CXX)
 endforeach ()
 ```
 
+We want to add WIN32_LEAN_AND_MEAN, NOMINMAX, VC_EXTRALEAN to all C and C++ compile definitions. Instead of adding these generic defines to each target individually using `target_compile_definitions` we use `add_compile_definitions`. The defines in here will be applied to all targets in directories below this statement, including any C# and RC files which we dont want. There is no `remove_compile_definitions` command in CMake, so in order to apply these defines for only C and C++ files, we need to use generator expressions. Generator expressions get evalutated late in the CMake build process, which allows us a second chance to branch on different conditions.
+
 Unpacking this from outer to inner:
 
 - For the languages C and CXX (c++ in CMake language)
-- Loop over all targets with: `$<...>`
+- Evaluate for each target with: `$<...>`
 - Then: `$<COMPILE_LANGUAGE:${lang} ... >` - This is conditional, it says: "If the compiled language is C or CXX".
   If it is, the value is 1 and the next bit gets evaluated. If 0, the entire thing evaluates to nothing and
   `add_compile_definitions` just does nothing.
@@ -365,7 +366,7 @@ your machine. In this setup, there is only one copy of each required library ver
 package manager becomes part of the same subsystem that makes up the compiler toolchain.
 
 In Martin's setup - you install `vcpkg` on the machine itself, point the environment variable `VCPKG_ROOT` at your
-installation and off you go. Any repo you compile on that machine will now use the same binaries.
+installation and off you go. Any repo you compile on that machine will now use the same binaries. The latest version of Visual Studio already includes `vcpkg` and will set `VCPKG_ROOT` to point to the relevant folder.
 
 ## `CMakePresets.json` for environment supplied `vcpkg`
 
