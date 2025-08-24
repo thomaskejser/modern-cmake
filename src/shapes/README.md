@@ -1,3 +1,4 @@
 # Shapes
 
-Defines a variety of shapes and functions that can calculate things on them
+Defines a variety of shapes and functions that can calculate properties of these shapes.
+

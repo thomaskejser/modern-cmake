@@ -14,19 +14,18 @@ message(STATUS "System name      : ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Triplet          : ${VCPKG_TARGET_TRIPLET}")
 message(STATUS "Module Path      : ${CMAKE_MODULE_PATH}")
 
-foreach(lang IN ITEMS C CXX)
+foreach (lang IN ITEMS C CXX)
     add_compile_definitions(
-        #Exclude rarely-used stuff from Windows headers
-        "$<$<COMPILE_LANGUAGE:${lang}>:WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN>"
+            #Exclude rarely-used stuff from Windows headers
+            "$<$<COMPILE_LANGUAGE:${lang}>:WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN>"
     )
-endforeach()
+endforeach ()
 
-find_package(plog CONFIG REQUIRED)
+find_package(plog)
 
-if(CMAKE_GENERATOR MATCHES "Visual Studio")
+if (CMAKE_GENERATOR MATCHES "Visual Studio")
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/MP>")
-endif()
-
+endif ()
 
 add_subdirectory(src)
 

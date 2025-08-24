@@ -8,5 +8,6 @@ public:
   const Point corner1;
   const Point corner2;
   const Point corner3;
+  double area() const;
 };
 }

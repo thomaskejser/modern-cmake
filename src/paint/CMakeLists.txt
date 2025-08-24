@@ -1,14 +1,11 @@
-set(_targetName "${PROJECT_NAME}_paint")
+add_executable(paint)
 
-find_package(CLI11)
-
-add_executable(${_targetName})
-
-target_sources(${_targetName}
+target_sources(paint
         PRIVATE
         main.cpp)
 
-target_link_libraries(${_targetName}
+find_package(CLI11)
+target_link_libraries(paint
         PRIVATE
         plog::plog
         CLI11::CLI11
