@@ -399,7 +399,7 @@ look like.
 
 Here is how you do it:
 
-### Submodule `vcpkg` into `externn/vcpkg`
+### Submodule `vcpkg` into `extern/vcpkg`
 
 Easiest done with a raw `git` command like this:
 
@@ -456,7 +456,6 @@ In our repo, we supply a vendored `vcpkg` preset, it looks like this:
   "generator": "Visual Studio 17 2022",
   "binaryDir": "${sourceDir}/build/${presetName}",
   "cacheVariables": {
-    "CMAKE_BUILD_TYPE": "Debug",
     "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
     "VCPKG_TARGET_TRIPLET": "x64-windows",
     "VCPKG_FEATURE_FLAGS": "manifests",
