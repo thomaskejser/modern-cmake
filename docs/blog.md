@@ -1,18 +1,18 @@
 Today's blog is written in collaboration with my friend [Martin Broholm Andersen](https://github.com/MBroholmA).
 
-Martin and I are both C++ programmers - but we come from different programming traditions. These differences provide
+Martin and I are both C++ programmers, but we come from different programming traditions. These differences provide
 us with a rich source of subjects to argue about. We both learn a lot from these arguments.
 
-I have been working for years on old Cmake projects (from the 2.x era) and Martin has been busy moving legacy
-`.sln`/`.vcxproj` projects at his workplace to modern, CMake 3.x style projects. His reasons for moving to CMake was
-not to be able to cross compile or lock down binaries - but to scale, reorganize and merge the large code base he
-manages.
+I have been working for years on old Cmake projects (from the 2.x era). Martin has been busy moving legacy
+`.sln`/`.vcxproj` projects at his workplace to modern, CMake 3.x style projects. 
+His reasons for moving to CMake was not to be able to cross compile or lock down binaries – but to scale, 
+reorganize and merge the large code base he manages.
 
-Martin is a Visual Studio user, I use CLion. We hope our mixed experience will give you a good experience no matter
-what tooling you prefer.
+Martin is a Visual Studio user, I use CLion. 
+We hope our mixed experience will give you a good experience no matter what tooling you prefer.
 
-Martin's knowledge of modern CMake far exceeds mine. As he was melding his mind into mine - we both
-learned (and argued) a lot. This blog contains the result of our discussions and our final agreement on best practices
+Martin's knowledge of modern CMake far exceeds mine. As he was melding his mind into mine we both
+learned (and argued) a lot. This blog contains the result of our discussions, and our final agreement on best practices
 for creating modern style repos that use Cmake 3.x.
 
 We expect that this blog will be updated and expanded to serve as a reference for both experienced developers and new
@@ -22,23 +22,23 @@ The repo containing our template CMake project can be found on GitHub:
 
 - [Modern Cmake](https://github.com/thomaskejser/modern-cmake).
 
-As is the tradition on Database Doctor - I encourage disagreement and discussions.
+As is the tradition on Database Doctor – I encourage disagreement and discussions.
 
 # Step 1: Pick a namespace
 
 To play nice with other libraries, your own code should live in a namespace that is unique to you.
 
 The namespace could be the name of the company you work for. It could be your gaming alias. The name of your dog or
-anything else that is likely be too unique. Think of it the same way you think of a domain name - it's you little,
+anything else that is likely be too unique. Think of it the same way you think of a domain name – it's you little,
 unique piece of the Internet.
 
 ## Why Pick a namespace?
 
 When your code is consumed, particularly if that code is a library, you don't know what other libraries
-you might co-exist with. Instead of polluting the global namespace with your classes and functions - you make it clear
+you might co-exist with. Instead of polluting the global namespace with your classes and functions – you make it clear
 to the consumer of your library how to find your code: by going via your namespace!
 
-Even the C++ standard library lives by this rule - putting all their code in the `std` namespace. Unlike other
+Even the C++ standard library lives by this rule – putting all their code in the `std` namespace. Unlike other
 libraries, `std` is special and has reserved the right to use `#include` that is always global, without slashes and
 using brackets like this:
 
@@ -56,15 +56,14 @@ For example, if we use `nlohman` to parse JSON, we include it like this:
 #include <nlohmann/json.hpp>
 ```
 
-The namespace you pick will be used throughout your repo and by everyone who consumes your library, so pick wisely.
+The namespace you pick will be used throughout your repo and by everyone who consumes your library, pick wisely.
 
 ## Our `demo` namespace and libraries
 
-For our example repo, we use the namespace: `demo`. It's not very original and unique - but it is for
-illustration purposes.
+For our example repo, we use the namespace: `demo`. 
+It's not very original or unique – but it is fast to type and hence good for illustration purposes.
 
-As you can read in our [`README.md`](https://github.com/thomaskejser/modern-cmake/blob/main/README.md) we offer
-two libraries under the `demo` namespace:
+As you can read in our [`README.md`](https://github.com/thomaskejser/modern-cmake/blob/main/README.md) we offer two libraries under the `demo` namespace:
 
 - `shapes` - in namespace `demo::shapes`
 - `renderer` - in namespace `demo::renderer`
@@ -73,8 +72,7 @@ two libraries under the `demo` namespace:
 
 When you consume libraries, you do not need to prefix their namespace in your implementation files.
 
-You can do
-this instead:
+You can do this instead:
 
 ```c++
 using namespace demo::shapes;
@@ -90,7 +88,7 @@ std::vector<Shape> make_snow_man() {
 
 There is a rule about `using namespace` that you should always follow:
 
-> You shall *not*  put `using namespace` into public headers
+> You shall *not* put `using namespace` into public headers
 
 Why? Because if you do this, a person including your public header may end up with a `using` declaration that
 they did not intend. This is annoying, error-prone and tricky to debug. It's not nice!
@@ -102,7 +100,7 @@ Our annoying programmer "Null-pointer" Nick has a `shapes.h` public header, cont
 ```c++
 #pragma once
 
-namepace demo::shapes  {
+namepace demo::shapes {
 using Shape = std::variant<Circle, Rectangle, Triangle>;  
 }
 
@@ -144,17 +142,17 @@ Summary: don't put `using namespace` in headers.
 Every repo root looks like this:
 
 - `src/` - All source files except the root level `CMakeList` lives here. Each library or executable has its own
-  directory
+  directory.
 - `docs/` - Generic docs about the repo and usage examples for consumers. Individual projects under `src` contain docs
-  and `README.md` targeted towards maintainers
+  and `README.md` targeted towards maintainers.
 - `extern/` - external libraries we depend on are in here.
-- `cmake/` - Custom functions live here. We provide a few basic ones that you might find useful
-- `.vscode/` - Visual Studio specific configuration
-- `.idea/` - Clion specific configuration
+- `cmake/` - Custom functions live here. We provide a few basic ones that you might find useful.
+- `.vscode/` - Visual Studio specific configuration.
+- `.idea/` - Clion specific configuration.
 
 # Root Level files
 
-In the root of every repo, the following files are present
+In the root of every repo, the following files are present:
 
 - [`README.md`](#the-root-level-readmemd)
 - [`LICENCE`](#the-license-file)
@@ -173,8 +171,8 @@ an hour to absorb.
 
 The root level `README.md` file tells the reader what this repo is **for**. 
 It provides an overview of what binaries are build and a single line about each binary and what it does. 
-For detailed information about each binary - you can link to the `README.md` file inside the directory
-of the binary - located in `[root]/src/[binary]/README.md`
+For detailed information about each binary, you can link to the `README.md` file inside the directory
+of the binary. The binary specific readme should be located in `[root]/src/[binary]/README.md`
 
 **Resources**
 
@@ -182,16 +180,16 @@ of the binary - located in `[root]/src/[binary]/README.md`
 
 ## The `LICENSE` file
 
-If you are using GitHub, you will be offered the option to create this file when the repo is first initilised. 
+If you are using GitHub, you will be offered the option to create this file when the repo is first initialised. 
 You should pick a licensing model for everything in this repo and the `LICENSE` file should contain a standard text 
-pertaining to that license.
+pertaining to that licence.
 
-A detailed discussion about which license works for your situation is out of scope for this document. Be nice to
-lawyers if you need advice: At the rate LLMs are going - they will need your money soon.
+A detailed discussion about which licence works for your situation is out of scope for this document. 
+Be nice to lawyers if you need advice: At the rate LLMs are going, they will need your money soon.
 
 ## `.gitignore`
 
-Files listed here will be ignored by git and not be committed to the repo. 
+Files listed here will be ignored by Git and will not be committed to the repo. 
 Our demo repo contains a standard template one you can use for your C++ project.
 
 **Resources**
@@ -201,7 +199,7 @@ Our demo repo contains a standard template one you can use for your C++ project.
 ## `.gitmodules` - external modules
 
 If you have used `git submodule` this file will appear. 
-For example, you may choose to [Vendor vcpkg](#the-doctors-choice-vendoring-vcpkg) which will create this file.
+For example, you may choose to [Vendor vcpkg,](#the-doctors-choice-vendoring-vcpkg) which will create this file.
 
 You should not need to do anything to this file, it is maintained by `git`.
 
@@ -215,16 +213,15 @@ Instead, use these files to force one.
 With these two files correctly configured, everyone's code will look similar and nice, and nobody has to spend any
 time formatting code ... ever ... again.
 
-`.clang-tidy` will also help you find common issue with your C++ code - it is a good idea to always run with one.
+`.clang-tidy` will also help you find common issue with your C++ code, it is a good idea to always run with one.
 
-The Doctor likes the Google formatting guide (but with 120 character long lines - because it isn't 1980 anymore).
+The Doctor likes the Google formatting guide (but with 120 character long lines, it isn't 1980 any more).
 You might have other preferences. 
-The important part is to set the rules early - ideally when the repo is created. 
+The important part is to set the rules early, ideally when the repo is created. 
 
 **Resources**
 
-- [Clang format style options](https://clang.llvm.org/docs/ClangFormatStyleOptions.html) - Here, you find the list
-  of various styles. Search for "BasedOnStyle"
+- [Clang format style options](https://clang.llvm.org/docs/ClangFormatStyleOptions.html) – Here, you find the list of various styles. Search for "BasedOnStyle"
 
 ## `CMakePresets.json` - Configuration options for your build
 
@@ -233,10 +230,10 @@ know these presets as "variants".
 
 Presents contain:
 
-- Options (under `cacheVariables`) - these control things like your toolchain and platform specific build settings
-- Various directories - where does your build and install files go?
+- Options (under `cacheVariables`) - these control things like your toolchain and platform specific build settings.
+- Various directories. Where does your build and install files go?
 - Toolchain and platforms used to build
-- Debug, Valgrind and other special build variants along with the settings required to make them
+- Debug, Valgrind and other special build variants along with the settings required to make them.
 
 ### Clion and `CMakePresets.json`
 
@@ -244,16 +241,16 @@ If you are using CLion, you enable the build configurations from `CMakePresets.j
 
 - **Settings → Build, Execution, Deployment → CMake**
 
-Check the box for the present you want to use and you are good to go.
+Check the box for the present you want to use, and you are good to go.
 
 ## The Root level `CmakeLists.txt`
 
 This file sets the rules of how things get built in the repo. 
 
-You generally *don't* want to specify anything about *what* is being built here - this file isn't the recipe for how
+You generally *don't* want to specify anything about *what* is being built here, this file isn't the recipe for how
 to build the repo. 
-While it is *possible* to make a single, gigantic, `CMakeLists.txt` that control the entire build process - 
-it is bad idea. 
+While it is *possible* to make a single, gigantic, `CMakeLists.txt` that control the entire build process, it is bad 
+idea. 
 The same way it is bad to have gigantic "do it all" functions in your code. Fortunately, CMake has `add_subdirectory`
 to help us make the build process modular.
 
@@ -276,7 +273,7 @@ include(cmake/EmbedStrings.cmake)
 
 This sets the basic rules:
 
-- You need at least version 3.24 of CMake to build this
+- You need at least version 3.24 of CMake to build this.
 - The project (which matches the namespace you picked earlier) is called `demo`
 - We are using C++ version 23
 - The Cmake modules we use are in the root. 
@@ -284,7 +281,7 @@ This sets the basic rules:
 - We introduce a handy function called `EmbedStrings` - which we can use to embed strings from files directly into C++
   code (which means we can compile them into our binaries)
 
-Everyone under this root level `CMakeLists.txt` follow the above rules - unless they explicitly tell us otherwise.
+Everyone under this root level `CMakeLists.txt` follow the above rules, unless they explicitly tell us otherwise.
 
 ### Various Flags and Settings
 
@@ -304,11 +301,10 @@ endforeach ()
 
 Our goal: Add WIN32_LEAN_AND_MEAN, NOMINMAX, VC_EXTRALEAN to all C and C++ compile definitions. 
 
-We avoid using `target_compile_definitions` because it will add the definition to *all* targets below us - including
-things like C# and RC files - which makes no sense. 
-Instead, we use `add_compile_definitions`. 
+We avoid using `target_compile_definitions` because it would require us to use it on all target below us. 
+Instead, we set a general rules in the root level `CMakeLists.txt` to cover all targets.
 
-There is no `remove_compile_definitions` command in CMake, so in order to apply defines for only C
+There is no `remove_compile_definitions` command in CMake, so in order to apply defines for *only* C
 and C++ files, we need to use generator expressions. Generator expressions get evaluated late in the CMake build
 process, which allows us a second chance to branch on different conditions.
 
@@ -317,24 +313,24 @@ Unpacking this from outer to inner:
 - For the languages C and CXX (C++ in CMake language)
 - Evaluate for each target with: `$<...>`
 - Then: `$<COMPILE_LANGUAGE:${lang} ... >` - This is conditional, it says: "If the compiled language is C or CXX".
-  If it is, the value is 1 and the next bit gets evaluated. If 0, the entire thing evaluates to nothing and
+  If it is, the value is 1, and the next bit gets evaluated. If 0, the entire thing evaluates to nothing and
   `add_compile_definitions` just does nothing.
 
-Basically, this allows us to force all targets that are under our `CMakeLists.txt` and which are C or C++ to have the
-Windows specific compile flags set - without touching anything that is not C/C++.
+Basically, this allows us to force all targets that are under our `CMakeLists.txt` which are C or C++ to have the
+Windows specific compile flags set – without touching anything that is not C/C++.
 
 Clever indeed...
 
 ### One, Global Library `plog`
 
-We finally add a single library that should be available to everyone - namely our logger:
+We finally add a single library that should be available to everyone, namely our logger:
 
 ```cmake
 find_package(plog)
 ```
 
 Here, we pick `plog`, but other could be chosen too. It's generally a good idea to agree on a single log library, it
-just makes things easier for everyone. Remember, we are not building anything yet - we are setting the rules of our
+just makes things easier for everyone. Remember, we are not building anything yet; we are setting the rules of our
 repo.
 
 ### The rest of the source and `src/CMakeLists.txt`
@@ -342,10 +338,10 @@ repo.
 We have now done all our global config. Finally, let us add the actual source we want to compile with:
 
 ```cmake
-add_directory(src)
+add_subdirectory(src)
 ```
 
-This points as the next level down our tree, the `src` directory. In here, we have one directory per target we expose
+This points as the next level down our tree, the `src` directory. In here, we have one directory per target exposed
 to the outside world.
 
 The file `src/CMakeList.txt` is the only file in `src` and it just contains:
@@ -358,23 +354,19 @@ add_subdirectory(renderer)
 This file serves a single purpose: To point at all the targets that we want to build.
 
 Why do this and not just refer to each directory in the root level `CMakeLists.txt`? 
-Because it makes it really easy to track new targets being added or removed: because they will result in a diff to 
-this one file. 
-The git history of `src/CMakeLists.txt` is the history of targets in the repo.
+Because it makes it really easy to track new targets being added or removed: they will result in a diff to this one 
+file: The git history of `src/CMakeLists.txt` is the history of targets in the repo.
 
 # Clion configuration in `.idea/` - particularly `misc.xml`
 
-If you are using Clion from Jetbrains - you can store additional configuration in this directory. At the time of
-writing, Clion already sets up a `.gitignore` inside this directory for you. Typically, you will want to commit at
-least the `.idea/misc.xml` file here. This file contains the directories that Clion won't index.
+If you are using Clion from Jetbrains, you can store additional configuration in this directory. 
+At the time of writing, Clion already sets up a `.gitignore` inside this directory for you. 
+Typically, you will want to commit at least the `.idea/misc.xml` file here. This file contains the directories that 
+Clion won't index.
 
-If you are [vendoring `vcpkg`](#the-doctors-choice-vendoring-vcpkg) you *really* don't want a slow Java app (=Clion) 
-to start looking into every single build script that `vcpkg` offers. 
+If you are [vendoring `vcpkg`](#the-doctors-choice-vendoring-vcpkg) you *really* don't want a slow Java app (=Clion) to start looking into every single 
+build script that `vcpkg` offers. 
 Be nice and commit your ignore rule (our repo has this file committed).
-
-# TODO: Note about Visual Studio config
-
-@martin: for you please!
 
 # Third party sources (in `extern`) and `vcpkg`
 
@@ -382,20 +374,23 @@ Before we move on to our actual source code, let us sit down and talk about thir
 
 Martin and I have vastly different opinions. And for your reading pleasure, we will present both.
 
-I come from a background of strictly controlling the binary you build - down to what exactly is compiled for each third
-party dependency you take. I don't want to link or include *anything* that I not 100% in control of. 
-I try not to take dependencies - unless I  *absolutely* need them. 
-I hate watching my build download half the internet just to lowercase a string. 
-If you pull in big libraries to do small things - I get grumpy. 
-I prefer to keep linkage strictly private whenever I can - making extensive use of [Pimpl idioms](https://en.cppreference.com/w/cpp/language/pimpl.html) and generally 
-avoiding headers from anything except `std` being pulled into my public headers.
+I come from a background of strictly controlling the binary you build, down to what exactly is compiled for each third
+party dependency I take. 
+I don't want to link or include *anything* that I not 100% in control of. 
+My priority is to avoid dependencies, unless I  *absolutely* need them. 
+There is nothing worse than watching my build download half the internet just to import a function to lowercase a string. 
+If you pull in big libraries to do small things – I get grumpy. 
+I also prefer to keep linkage strictly private whenever I can, making extensive use of [Pimpl idioms](https://en.cppreference.com/w/cpp/language/pimpl.html) and 
+generally except `std` being present as `#include` in my public headers.
 
 But Martin deals with a lot of code that must flexibly integrate in ways that a-priory is unknown
-to the creator of the original code. For example, in a setup like Martin’s repositories from all over his
-organisation will be built and linked up in many build environments. When you borrow and link a third party
-dependency to a library from one corner of the organisation, you might want to externally control that this linkage 
-is the same as for the library you are building. This, of course, makes a lot of sense when headers have to 
-be binary compatible, and you need a lot of “generic” usability without strict control of each binary.
+to the creator of the original code. 
+For example, in a setup like Martin’s, repositories from all over his organisation will be built and linked up in many 
+build environments. 
+When you borrow and link a third party dependency to a library from one corner of the organisation, you might want to 
+externally control that this linkage is the same as for the library you are building. 
+This, of course, makes a lot of sense when headers have to be binary compatible, and you need a lot of “generic” 
+usability without strict control of each binary.
 
 Our individual preferences influence how we deal with integrating `vcpkg`. 
 We have provided both methods for you to choose from in our repo template.
@@ -403,12 +398,14 @@ We have provided both methods for you to choose from in our repo template.
 ## Martin's Choice: Using `vcpkg` from the environment
 
 Martin generally prefers to have a `vcpkg` preinstalled on his build machines to serves up libraries to anyone building 
-on it. This method is great when you have repositories that frequently use the same packages and if you want to save space on
+on it. 
+This method is great when you have repositories that frequently use the same packages and if you want to save space on
 your machine. In this setup, a single copy of each required library version is available on the machine. The `vcpkg`
 package manager becomes part of the same subsystem that makes up the compiler toolchain.
 
 In Martin’s setup — you install `vcpkg` on the machine itself, point the environment variable `VCPKG_ROOT` at your
-installation and off you go. Any repo you compile on that machine will now use the same binaries. 
+installation and off you go. Any repo you compile on that machine will use the same binaries rom the same `vcpkg` 
+provider.
 The latest version of Visual Studio already includes `vcpkg` and will set `VCPKG_ROOT` to point to the relevant folder.
 
 ## `CMakePresets.json` for environment supplied `vcpkg`
@@ -429,13 +426,14 @@ Your presets, if you used Martin’s solution, will look something like this:
 }
 ```
 
-Notice how we will pull in ports from the local `extern` directory — but we take our `vcpkg` binary and its installed
+Notice how we will pull in ports from the local `extern` directory, but we take our `vcpkg` binary and its installed
 package from the environment.
 
 ## The Doctor’s Choice: Vendoring `vcpkg`
 
 If you want complete control over your binaries (for example, when building highly optimised and/or embedded systems)
-you have the option of vendoring `vcpkg`. What this means, is that your package manager itself is part of your repo.
+you have the option of vendoring `vcpkg`. 
+What this means, is that your package manager itself is part of your repo.
 
 This allows you to pin every single build script and be in complete control over what your external libraries
 look like.
@@ -459,7 +457,7 @@ git commit -m "Vendor vcpkg at pinned commit"
 
 ### Install `vcpkg` into your repo
 
-Next, you need to bootstrap `vcpkg`. You only need to do this once and the invocation is:
+Next, you need to bootstrap `vcpkg`. You only need to do this once, and the invocation is:
 
 ```shell
 cd extern/vcpkg
@@ -485,7 +483,7 @@ Once your file is updated with the external dependencies you need, you can now d
 
 This will pin the `vcpkg` SHA to your manifest file locking the configuration down.
 
-Note that even with Martin's solution you can still lock down individual versions with the manifest - but you are
+Note that even with Martin's solution you can still lock down individual versions with the manifest, but you are
 now relying on the environments `vcpkg` to supply you those versions.
 
 ### Use `CMakePresents.json` to use your vendored `vcpkg`
@@ -515,10 +513,10 @@ In our repo, we supply a vendored `vcpkg` preset, it looks like this:
 
 Vendoring allows you to be full control of every package and its binaries.
 
-However, it comes with a downside: You will get one copy of all the build binaries per repo on your machine. This can
-be a substantial amount of space on you disk.
+However, it comes with a downside: You will get one copy of all the binaries per repository on your machine. This can
+be a substantial amount of space on local disk.
 
-Consider yourself warned - you might want Martin's solution.
+Consider yourself warned. You might want Martin's solution if this concerns you.
 
 # Structuring your Code
 
@@ -540,7 +538,7 @@ library called `shapes`:
 - We add the directory `src/shapes/`
 - The build of `shapes` is controlled fully by `src/shapes/CMakeLists.txt` - this includes pulling in all required 
   dependencies via `find_package` and `target_link_library`
-- The build of `shapes` is enabled when we add `add_subdirectory(shapes)` into the `src/CMakeLists.txt` file
+- The build of `shapes` is enabled when we add `add_subdirectory(shapes)` into the `src/CMakeLists.txt` file.
 
 
 ## Namespace Usage in Libraries
@@ -658,9 +656,9 @@ If you create libraries, you should generally expose a linkable target with a na
 simple name. 
 Using a name like `CLI11::CLI11` tells CMake: 
 
-> The thing called `CLI11::CLI` is target not made by this file - go look for it!
+> The thing called `CLI11::CLI` is target not made by this file, go look for it!
  
-That target may be defined elsewhere in the repo - or it could be imported via the toolchain (`vcpkg` in our example).
+That target may be defined elsewhere in the repo, or it could be imported via the toolchain (`vcpkg` in our example).
 
 To find the exact link name (a different name that what you used in`find_package`) - check your `cmake` logs. 
 For example, the library `plog` shows this in the logs when you execute `find_package`:
@@ -682,16 +680,16 @@ The public facing view of a library consists of the following components:
 1) A linkable binary
 2) Header files
 
-Ad 1) The linkable binary has an extension which depends on the operating system you are compiling against. 
+Ad 1) The linkable binary has an extension, which depends on the operating system you are compiling against. 
 The extension also depends on whether you are creating a static or dynamically linked library.
 
 It is useful to know these extensions, so here they are for different platforms:
 
-| Platform      | Static Library Extension | Dymaic Library Extension |
-|---------------|--------------------------|--------------------------|
-| Linux ./ Unix | `.a`                     | `.so`                    |
-| Windows       | `.lib`                   | `.dll`                   |
-| OSX           | `.a`                     | `.dylib`                 |
+| Platform      | Static Library Extension | Dynamic Library Extension |
+|---------------|--------------------------|---------------------------|
+| Linux ./ Unix | `.a`                     | `.so`                     |
+| Windows       | `.lib`                   | `.dll`                    |
+| OSX           | `.a`                     | `.dylib`                  |
 
 By convention, the file name part of the library is also pre- or post-fixed with the string `lib`. 
 Don't put the name `lib` in your targets — CMake will do that for you.
@@ -712,7 +710,8 @@ Recall that every target we build has its own directory under `src/`.
 When building a library, we will then add another directory called: `src/[target]/include/[namespace]/[target]/`. 
 With `[namespace]` being the name you have already picked.
 
-This might seem annoying — and it is. But it provides us with two strong benefits:
+This might seem annoying, and it is. 
+But it provides us with two strong benefits:
 
 1) Consistent `#include` patterns
 2) Clear distinction between public and private headers
@@ -854,43 +853,44 @@ When you consume headers with `#include` in C++, you should generally include fi
 2) Stdlib
 3) External, third party headers
 
-Ad 1) This is the header corresponding to the `cpp` file you are compiling or a public facing big header with all
-your data types. By including this first, we ensure that our library is self-sufficient - i.e. that its compilation
-does not depend on external headers being included. These internal files are included relative to the file including
-them with quotes. Example in `rectangle.cpp`
+Ad 1) This is the header corresponding to the `cpp` file you are compiling, or a public facing big header with all
+your data types. By including this first, we ensure that our library is self-sufficient. i.e. that its compilation
+does not depend on external headers being transitively included from other header files. 
+These internal files are included relative to the file including them with quotes. Example in `rectangle.cpp`
 
 ```c++
 #include "include/demo/shapes/rectangle.h"
 ```
 
-Ad 2) We consider headers from `std` to be "stable" and we want to include these files *after* our internal libraries.
+Ad 2) We consider headers from `std` to be "stable", and we want to include these files *after* our internal libraries.
 This avoids the subtle case where the code inside out compilation unit (i.e. the `cpp` file) only works because we
-happened to pull in stdlib indirectly via a third party dependency). Stdlib should always be included with brackets
-like this:
+happened to pull in stdlib indirectly via a third party dependency). 
+Stdlib should always be included with brackets like this:
 
 ```c++
 #include <vector>
 ```
 
 Ad 3) Finally, we pull in any third party dependencies (include libraries build by our own repo and linked into
-the target we are currently compiling). When we use our own libraries, the include will look like this:
+the target we are currently compiling). When we use our own libraries, the `#include` will look like this:
 
 ```c++
 #include <demo/shapes/shapes.h>
 ```
 
-You are enforce this rule with `.clang-format` and our repo contains the code to do so.
+You can enforce this rule with `.clang-format` and the demo repository contains this enforcement.
 
 # Summary
 
 We have now sketched out how to arrange a repository to use a modern `cmake` to build C++ code. The demo repository is
-public and you are free to use it as you please. We also welcome contributions.
+public, you are free to use it as you please. We also welcome contributions.
 
 Our repo is here:
 
 - [Modern CMake](https://github.com/thomaskejser/modern-cmake)
 
-There is a lot more to say about this subject. We have not yet spoken about test integration - which has enough meat to
-cover a full blog article. That will have to wait for another weekend.
+There is a lot more to say about this subject. We have not yet spoken about test integration – which has enough meat to
+cover a full blog article. 
+That will have to wait for another weekend or two.
 
-Until we talk agin: All the best from Martin and The Doctor.
+Until we talk again: All the best from Martin and The Doctor.
